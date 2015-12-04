@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+
+    <!-- Set the title here -->
+    <title>Rapport - Analyses thématiques</title>
+
+    <!-- metadata -->
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+
+    <!-- turn off robots during dev -->
+    <meta name="robots" value="none">
+
+    <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Windows 8.1 garbage -->
+    <meta name="application-name" content="Analyses thématiques"/>
+    <meta name="msapplication-TileColor" content="#1e59bd"/>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/report.css?foo=94586">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="images/favicon.ico" />
+    <link rel="apple-touch-icon-precomposed" href="images/apple-touch-icon-precomposed.png" />
+
+</head>
+
+<body>
+    <!--[if lt IE 9]>
+        <p class="oldie alert-info text-center">You are using an outdated browser. <a href="http://whatbrowser.org/">Upgrade your browser today</a> to better experience this site.</p>
+    <![endif]-->
+
+    <div class="container">
+
+        <!-- Front page -->
+        <div class="page page-front">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="hero">
+                        <a href="http://ericbabef.alwaysdata.net/index.html" target="_blank"><img src="http://ericbabef.github.io/lib_externe/img/logo_eric.png" alt="Eric BABEF" border="0"/></a>
+                        <div class="subhero">
+                            <input type="text" class="form-control input-lg subtitle" placeholder="optional subtitle - type here" value="Rapport" maxlength=40>
+                            <h4 class="neighborhoods">&nbsp;</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <p>
+                        TEXTE
+                    </p>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <div id="smallmap" class="pull-right"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <table class="metric-box">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h2>Démographie</h2>
+                                    <h3 data-metric="m1">&nbsp;</h3>
+                                    <h4>Population en 2015</h4>
+                                </td>
+								<td>
+                                    <h2>Education</h2>
+                                    <h3 data-metric="m2">&nbsp;</h3>
+                                    <h4>Nombre d'écoles en 2015</h4>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Large Map -->
+        <div class="page page-category">
+            <div class="row text-center">
+                <div id="largemap"></div>
+            </div>
+        </div>
+
+        <!-- category pages -->
+        <div class="category-pages"></div>
+
+
+    </div>
+
+    <!-- category page template -->
+    <script type="text/template" id="template-category">
+        <div class="page page-category">
+            <div class="row">
+                <div class="col-xs-6 text-left">
+                    <h1><%= rc.category.toProperCase() %></h1>
+                </div>
+            </div>
+            <div class="row">
+                <% if (typeof rc.vis === 'function') { %>
+                <%= rc.vis() %>
+                <% } %>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <table class="table table-condensed table-<%= rc.category.replace(/\s+/g, "-") %>">
+                      <thead>
+                        <tr>
+                          <th>Variable</th>
+                          <th class="text-right report-column-selected">Sélection</th>
+                          <th class="text-right report-column-county">CAHM</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!-- Underscore row template -->
+    <script type="text/template" class="template-row">
+      <tr data-metric="<%= rc.id %>">
+          <!-- Name (year) -->
+          <td class='text-left label-<%= rc.id %>' data-val="<%= metricConfig[rc.id].title %>">
+              <a target="_blank" href="./?m=<%= rc.id %>&n=<%= theFilter.join(',') %>"><%= metricConfig[rc.id].title %></a>
+            (<%= rc.year %>)
+          </td>
+          <!-- Selected Value -->
+          <td class='text-right data-<%= rc.id %> report-column-selected' data-selected-val="<%= rc.selectedNVal %>" data-county-val="<%= rc.countyNVal %>">
+              <%= rc.selectedVal %><%= rc.selectedRaw %>
+          </td>
+          <!-- County Value -->
+          <td class='text-right report-column-county'>
+              <%= rc.countyVal %><%= rc.countyRaw %>
+          </td>
+          <!-- Units -->
+          <td class='text-left report-units'>
+              <%= metricConfig[rc.id].label %>
+              <% if (metricConfig[rc.id].raw_label) { %>
+                  <br><%= metricConfig[rc.id].raw_label %>
+              <% } %>
+          </td>
+      </tr>
+    </script>
+	
+	<!-- category chart template - démographie -->
+    <script type="text/template" id="template-vis-démographie">
+        <div class="col-xs-12 text-center vis vis-horizontal">
+            <h4>Population entre 1999 et 2015</h4>
+            <canvas id="chart-démographie-1" class="chart-line" data-chart="m1" width="550" height="220"></canvas>
+            <div id="chart-démographie-1-legend" class="text-center"></div>
+        </div>
+    </script>
+	
+	<!-- category chart template - education -->
+    <script type="text/template" id="template-vis-education">
+        <div class="col-xs-3 col-xs-offset-1 text-center vis vis-horizontal">
+            <h4>Sélection</h4>
+            <canvas id="chart-education-1" class="chart-doughnut" data-selector="selected-val" data-chart="m3,m4" width="150" height="150"></canvas>
+        </div>
+        <div class="col-xs-4 text-center vis vis-vertical">
+            <h4>CAHM</h4>
+            <canvas id="chart-education-2" class="chart-doughnut" data-selector="county-val" data-chart="m3,m4" width="150" height="150"></canvas>
+        </div>
+        <div class="col-xs-4 text-center vis vis-vertical">
+            <div id="chart-education-2-legend" class="text-center" style="margin-top: 60px;"></div>
+        </div>
+    </script>
+
+
+    <!-- scripts at the bottom yo -->
+    <script src="js/report.js?foo=94586"></script>
+
+</body>
+
+</html>
