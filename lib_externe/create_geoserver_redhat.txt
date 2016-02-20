@@ -1,0 +1,12 @@
+rhc --clean
+rhc setup -l babef.eric@gmail.com
+rhc setup
+
+rhc app-create -s geoserver jbossews-2.0
+cd geoserver
+git remote add github -m master https://github.com/thesteve0/geoserver-on-openshift.git
+git pull -s recursive -X theirs github master
+git rm pom.xml
+git commit -am "prep work done and srirachi sauce is yummy"
+git push origin
+rhc set-env --env CATALINA_OPTS=/var/lib/"clé"/app-root/data/geoserver_data --app geoserver
